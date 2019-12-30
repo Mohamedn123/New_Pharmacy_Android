@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pharmacy.Product.Product;
 import com.example.pharmacy.Users.CartFirebaseFinish;
 import com.example.pharmacy.Users.CartItems;
 import com.example.pharmacy.Users.FirebaseFinish;
@@ -86,20 +87,26 @@ public class ViewOrderDetails extends AppCompatActivity {
                     }
 
                     @Override
-                    public void GetAllCartItems(ArrayList<CartItems> CartItems, String ID) {
+                    public void GetAllCartItems(final ArrayList<CartItems> CartItems, String ID) {
                         cart_adapter cart_adapter = new cart_adapter(CartItems , ViewOrderDetails.this);
                         Items.setLayoutManager(new LinearLayoutManager(getApplicationContext()));
                         Items.setAdapter(cart_adapter);
+
+                        Confirm.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                Product product = new Product();
+                                for (int x=0;x<CartItems.size();x++){
+                                    product.UpdateProductQuantity(CartItems.get(x).getProductID());
+                                }
+                                pendingOders.CofirmOrder(pendingOders.getCartID() , pendingOders.getUserID() , pendingOders.getID());
+                                Toast.makeText(getApplicationContext() , "Order Confirmed" , Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
                 });
 
-                Confirm.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        pendingOders.CofirmOrder(pendingOders.getCartID() , pendingOders.getUserID() , pendingOders.getID());
-                        Toast.makeText(getApplicationContext() , "Order Confirmed" , Toast.LENGTH_LONG).show();
-                    }
-                });
+
             }
         });
     }
